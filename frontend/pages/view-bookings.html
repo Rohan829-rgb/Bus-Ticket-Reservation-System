@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Bookings</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background-color: #f4f9ff; }
+    h2 { text-align: center; color: #34495e; margin-bottom: 30px; }
+    table {
+      width: 100%; border-collapse: collapse; background-color: white;
+    }
+    th, td {
+      padding: 12px; border: 1px solid #ccc; text-align: left;
+    }
+    th {
+      background-color: #2980b9; color: white;
+    }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    .no-booking {
+      text-align: center; font-size: 18px; color: #e74c3c; margin-top: 20px;
+    }
+    button {
+      background-color: #3498db; color: white;
+      border: none; padding: 6px 12px; border-radius: 4px;
+      cursor: pointer; font-size: 14px;
+    }
+    button:hover { background-color: #2c80b4; }
+  </style>
+</head>
+<body>
+
+  <h2>All Bookings</h2>
+  <div id="bookingContainer"></div>
+
+  <script>
+    const container = document.getElementById('bookingContainer');
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+    if (bookings.length === 0) {
+      container.innerHTML = '<p class="no-booking">No bookings found.</p>';
+    } else {
+      let table = `
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Bus Name</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Date</th>
+              <th>Seats</th>
+              <th>Fare</th>
+              <th>Booked At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      bookings.forEach((booking, index) => {
+        table += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${booking.busName}</td>
+            <td>${booking.from}</td>
+            <td>${booking.to}</td>
+            <td>${booking.date}</td>
+            <td>${booking.seats}</td>
+            <td>${booking.totalFare} BDT</td>
+            <td>${booking.timestamp || 'N/A'}</td>
+            <td><button onclick="goToPrint(${index})">Print</button></td>
+          </tr>
+        `;
+      });
+
+      table += '</tbody></table>';
+      container.innerHTML = table;
+    }
+
+    function goToPrint(index) {
+      const booking = bookings[index];
+      const query = `print.html?busName=${encodeURIComponent(booking.busName)}&from=${encodeURIComponent(booking.from)}&to=${encodeURIComponent(booking.to)}&date=${encodeURIComponent(booking.date)}&seats=${encodeURIComponent(booking.seats)}&fare=${encodeURIComponent(booking.totalFare)}`;
+      window.location.href = query;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Print Ticket</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f6ff;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .ticket {
+      border: 2px dashed #3498db;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #ecf7ff;
+    }
+
+    .ticket p {
+      font-size: 18px;
+      margin: 10px 0;
+      color: #333;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    button, .home-link {
+      padding: 12px 25px;
+      font-size: 16px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 6px;
+      background-color: #3498db;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    button:hover, .home-link:hover {
+      background-color: #2c80b4;
+    }
+
+    @media print {
+      .buttons {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Your Ticket</h2>
+
+    <div class="ticket" id="ticketContent">
+      <p><strong>User Name:</strong> <span id="username">-</span></p>
+      <p><strong>Bus Name:</strong> <span id="busName">-</span></p>
+      <p><strong>From:</strong> <span id="from">-</span></p>
+      <p><strong>To:</strong> <span id="to">-</span></p>
+      <p><strong>Date:</strong> <span id="date">-</span></p>
+      <p><strong>Selected Seats:</strong> <span id="seats">-</span></p>
+      <p><strong>Total Fare:</strong> <span id="fare">-</span> BDT</p>
+    </div>
+
+    <div class="buttons">
+      <button onclick="window.print()">🖨️ Print</button>
+      <button onclick="downloadPDF()">📥 Download PDF</button>
+      <a href="login.html" class="home-link">🏠 Back to Home</a>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const busName = params.get('busName') || 'N/A';
+    const from = params.get('from') || 'N/A';
+    const to = params.get('to') || 'N/A';
+    const date = params.get('date') || 'N/A';
+    const seats = params.get('seats') || 'N/A';
+    const fare = params.get('fare') || '0';
+    const username = localStorage.getItem('username') || 'Guest';
+
+    document.getElementById('username').textContent = username;
+    document.getElementById('busName').textContent = busName;
+    document.getElementById('from').textContent = from;
+    document.getElementById('to').textContent = to;
+    document.getElementById('date').textContent = date;
+    document.getElementById('seats').textContent = seats;
+    document.getElementById('fare').textContent = fare;
+
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.text("Ticket Details", 20, 20);
+      doc.setFontSize(12);
+      doc.text(`User Name: ${username}`, 20, 35);
+      doc.text(`Bus Name: ${busName}`, 20, 45);
+      doc.text(`From: ${from}`, 20, 55);
+      doc.text(`To: ${to}`, 20, 65);
+      doc.text(`Date: ${date}`, 20, 75);
+      doc.text(`Seats: ${seats}`, 20, 85);
+      doc.text(`Total Fare: ${fare} BDT`, 20, 95);
+
+      doc.save("ticket.pdf");
+    }
+  </script>
+
+</body>
+</html>

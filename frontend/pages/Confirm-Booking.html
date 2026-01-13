@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Confirm Booking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      background-color: #f4f9ff;
+    }
+
+    h2 {
+      text-align: center;
+      color: #34495e;
+      margin-bottom: 30px;
+    }
+
+    .details p {
+      font-size: 18px;
+      margin: 10px 0;
+      color: #2c3e50;
+    }
+
+    button {
+      display: block;
+      margin: 30px auto 0;
+      padding: 12px 30px;
+      font-size: 18px;
+      background-color: #27ae60;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #219150;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Confirm Your Booking</h2>
+
+  <div class="details">
+    <p><strong>Bus Name:</strong> <span id="busName"></span></p>
+    <p><strong>From:</strong> <span id="from"></span></p>
+    <p><strong>To:</strong> <span id="to"></span></p>
+    <p><strong>Date:</strong> <span id="date"></span></p>
+    <p><strong>Selected Seats:</strong> <span id="seats"></span></p>
+    <p><strong>Total Fare:</strong> <span id="fare"></span> BDT</p>
+  </div>
+
+  <button id="printBtn">Confirm & Print Ticket</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const busName = params.get('busName') || 'N/A';
+    const from = params.get('from') || 'N/A';
+    const to = params.get('to') || 'N/A';
+    const date = params.get('date') || 'N/A';
+    const seats = params.get('seats') || 'N/A';
+    const farePerSeat = parseInt(params.get('fare')) || 0;
+
+    const numberOfSeats = seats.split(',').filter(s => s.trim() !== '').length;
+    const totalFare = farePerSeat * numberOfSeats;
+
+    document.getElementById('busName').textContent = busName;
+    document.getElementById('from').textContent = from;
+    document.getElementById('to').textContent = to;
+    document.getElementById('date').textContent = date;
+    document.getElementById('seats').textContent = seats;
+    document.getElementById('fare').textContent = totalFare;
+
+    document.getElementById('printBtn').addEventListener('click', () => {
+      const booking = {
+        busName,
+        from,
+        to,
+        date,
+        seats,
+        totalFare,
+        timestamp: new Date().toLocaleString()
+      };
+
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      bookings.push(booking);
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+
+      const printUrl = `print.html?busName=${encodeURIComponent(busName)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}&seats=${encodeURIComponent(seats)}&fare=${encodeURIComponent(totalFare)}`;
+      window.location.href = printUrl;
+    });
+  </script>
+
+</body>
+</html>

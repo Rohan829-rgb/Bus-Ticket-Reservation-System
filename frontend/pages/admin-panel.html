@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #87ceeb; /* sky blue */
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-container {
+      background-color: #ffffff;
+      padding: 35px 30px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 14px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .login-container:hover {
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 28px;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #34495e;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.03em;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 22px;
+      border: 1.8px solid #ccc;
+      border-radius: 10px;
+      font-size: 17px;
+      transition: border-color 0.3s ease;
+      font-weight: 500;
+    }
+
+    input:focus {
+      border-color: #27ae60;
+      outline: none;
+      box-shadow: 0 0 6px #27ae60aa;
+    }
+
+    .error {
+      color: #d93025;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px 0;
+      background-color: #27ae60;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      letter-spacing: 0.05em;
+    }
+
+    button:hover {
+      background-color: #1e8449;
+    }
+
+    @media screen and (max-width: 480px) {
+      .login-container {
+        padding: 28px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        font-size: 16px;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>Admin Login</h2>
+
+    <form id="loginForm" autocomplete="off">
+      <label for="username">Username</label>
+      <input type="text" id="username" required placeholder="Enter username" />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required placeholder="Enter password" />
+
+      <div id="errorMsg" class="error"></div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (username === 'admin' && password === 'admin123') {
+        localStorage.setItem('isAdminLoggedIn', 'true');
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        errorMsg.textContent = 'Invalid username or password!';
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Bus</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 30px;
+      background-color: #f0f8ff;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    input {
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #27ae60;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Add New Bus</h2>
+  <div class="form-container">
+    <input type="text" id="busName" placeholder="Bus Name" required />
+    <input type="text" id="from" placeholder="From" required />
+    <input type="text" id="to" placeholder="To" required />
+    <input type="date" id="date" required />
+    <input type="number" id="fare" placeholder="Fare (BDT)" required />
+    <input type="number" id="seats" placeholder="Total Seats (e.g., 40)" required />
+    <button onclick="addBus()">Add Bus</button>
+  </div>
+
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'admin-panel.html';
+    }
+
+    async function addBus() {
+      const busName = document.getElementById('busName').value.trim();
+      const from = document.getElementById('from').value.trim();
+      const to = document.getElementById('to').value.trim();
+      const date = document.getElementById('date').value;
+      const fare = parseFloat(document.getElementById('fare').value);
+      const seats = parseInt(document.getElementById('seats').value);
+
+      if (!busName || !from || !to || !date || isNaN(fare) || isNaN(seats)) {
+        alert("Please fill in all fields correctly.");
+        return;
+      }
+
+      const busData = { busName, from, to, date, fare, seats };
+
+      try {
+        const response = await fetch('/api/addBus', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(busData)
+        });
+
+        const result = await response.json();
+        alert(result.message || 'Bus added successfully!');
+        window.location.href = 'edit-bus.html';
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to add bus.');
+      }
+    }
+  </script>
+
+</body>
+</html>

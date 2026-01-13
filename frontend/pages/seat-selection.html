@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select Seats</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f0f8ff; padding: 20px; }
+    h2 { text-align: center; color: #2c3e50; }
+    .seat-container {
+      display: grid; grid-template-columns: repeat(2, 60px) 40px repeat(2, 60px);
+      gap: 10px; justify-content: center; margin-top: 30px;
+    }
+    .seat {
+      width: 60px; height: 60px; background-color: #ddd; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-weight: bold;
+    }
+    .seat.selected { background-color: #2ecc71; color: white; }
+    .aisle { pointer-events: none; background: transparent; }
+    .info-box { margin-top: 20px; text-align: center; }
+    button {
+      padding: 12px 24px; background-color: #3498db; color: white;
+      border: none; border-radius: 6px; font-size: 16px; cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover { background-color: #2980b9; }
+  </style>
+</head>
+<body>
+
+  <h2>Select Your Seats</h2>
+  <div class="seat-container" id="seatContainer"></div>
+  <div class="info-box">
+    <p>Selected Seats: <span id="selectedSeats">None</span></p>
+    <button onclick="confirmBooking()">Confirm Booking</button>
+  </div>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select Seats</title>
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select Seats</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .seat-container {
+      display: grid;
+      grid-template-columns: repeat(2, 60px) 40px repeat(2, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .seat {
+      width: 60px;
+      height: 60px;
+      background-color: #ddd;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .seat.selected {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .aisle {
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .info-box {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    button {
+      padding: 12px 24px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Select Your Seats</h2>
+
+  <div class="seat-container" id="seatContainer"></div>
+
+  <div class="info-box">
+    <p>Selected Seats: <span id="selectedSeats">None</span></p>
+    <button onclick="confirmBooking()">Confirm Booking</button>
+  </div>
+
+  <script>
+    const seatContainer = document.getElementById("seatContainer");
+    const selectedSeats = [];
+    const selectedSeatsText = document.getElementById("selectedSeats");
+
+    const params = new URLSearchParams(window.location.search);
+    const busName = params.get("name") || "Unknown Bus";
+    const from = params.get("from") || "N/A";
+    const to = params.get("to") || "N/A";
+    const date = params.get("date") || "N/A";
+    const fare = parseInt(params.get("fare")) || 0;
+    const totalSeats = parseInt(params.get("seats")) || 40;
+
+    for (let i = 1; i <= totalSeats; i++) {
+      const col = (i - 1) % 4;
+      if (col === 2) {
+        const aisle = document.createElement("div");
+        aisle.classList.add("aisle");
+        seatContainer.appendChild(aisle);
+      }
+
+      const seat = document.createElement("div");
+      seat.classList.add("seat");
+      seat.textContent = i;
+      seat.addEventListener("click", () => {
+        seat.classList.toggle("selected");
+        const seatNumber = seat.textContent;
+        if (selectedSeats.includes(seatNumber)) {
+          selectedSeats.splice(selectedSeats.indexOf(seatNumber), 1);
+        } else {
+          selectedSeats.push(seatNumber);
+        }
+        selectedSeatsText.textContent = selectedSeats.length ? selectedSeats.join(", ") : "None";
+      });
+      seatContainer.appendChild(seat);
+    }
+
+    function confirmBooking() {
+      if (selectedSeats.length === 0) {
+        alert("Please select at least one seat!");
+        return;
+      }
+
+      const seatData = selectedSeats.join(",");
+      const bookingData = {
+        busName,
+        from,
+        to,
+        date,
+        seats: seatData,
+        totalFare: fare * selectedSeats.length
+      };
+
+      fetch('/api/confirm-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert(data.message);
+          // Optional redirect:
+          // window.location.href = "/print.html?..." 
+        } else {
+          alert("Booking failed. Please try again.");
+        }
+      })
+      .catch(err => console.error("Error:", err));
+    }
+  </script>
+
+</body>
+</html>

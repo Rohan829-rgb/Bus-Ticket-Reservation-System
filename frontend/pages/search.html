@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search Buses</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f8f9fa, #e0f7fa);
+      padding: 40px;
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 30px;
+      color: #00796b;
+    }
+
+    .search-box {
+      background-color: #ffffff;
+      display: inline-block;
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .search-box input[type="text"],
+    .search-box input[type="date"] {
+      padding: 10px 12px;
+      margin: 8px;
+      width: 180px;
+      border: 2px solid #b2dfdb;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .search-box button {
+      padding: 10px 24px;
+      background-color: #009688;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .search-box button:hover {
+      background-color: #00796b;
+    }
+
+    .bus-list {
+      margin-top: 30px;
+    }
+
+    .bus-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .bus-list li {
+      margin: 12px 0;
+      background-color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .bus-list li:hover {
+      transform: scale(1.02);
+      background-color: #e0f2f1;
+    }
+
+    .bus-list a {
+      text-decoration: none;
+      color: #004d40;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 50px;
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Search Bus Tickets</h1>
+
+  <div class="search-box">
+    <form id="searchForm">
+      <input type="text" id="from" placeholder="From (e.g., Dhaka)" required />
+      <input type="text" id="to" placeholder="To (e.g., Sylhet)" required />
+      <input type="date" id="date" required />
+      <br />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <div class="bus-list">
+    <ul id="busList"></ul>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Easy Bus Reservation</p>
+  </footer>
+
+  <script>
+    document.getElementById("searchForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const from = document.getElementById("from").value.trim().toLowerCase();
+      const toInput = document.getElementById("to").value.trim().toLowerCase();
+      const date = document.getElementById("date").value;
+
+      const toDestinations = toInput.split(',').map(dest => dest.trim().toLowerCase());
+
+      const buses = JSON.parse(localStorage.getItem("busList")) || [];
+
+      const results = buses.filter(bus =>
+        bus.from.toLowerCase() === from &&
+        toDestinations.includes(bus.to.toLowerCase()) &&
+        bus.date === date
+      );
+
+      const list = document.getElementById("busList");
+      list.innerHTML = "";
+
+      if (results.length > 0) {
+        results.forEach(bus => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <a href="seat-selection.html?name=${encodeURIComponent(bus.busName)}&type=AC&fare=${encodeURIComponent(bus.fare)}&seats=40&from=${encodeURIComponent(bus.from)}&to=${encodeURIComponent(bus.to)}&date=${encodeURIComponent(bus.date)}">
+              🚌 ${bus.busName} - AC | ${bus.fare} BDT | 40 seats available
+            </a>
+          `;
+          list.appendChild(li);
+        });
+      } else {
+        list.innerHTML = "<li>No buses found for your route and date.</li>";
+      }
+    });
+  </script>
+
+</body>
+</html>
